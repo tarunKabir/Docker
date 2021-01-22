@@ -44,3 +44,4 @@ run apt-get install -y python3
 22. docker volume create devvolume
 23. docker volumne inspect devvolumne
 24. docker container run -d --name devcont --mount source==devvolume, target=/app nginx
+25.
