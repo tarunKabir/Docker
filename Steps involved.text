@@ -1,47 +1,97 @@
 1. Check the version of the system
 cat /etc/issue
+
 2. sudo apt-get update
+
 # Reference : https://thenewstack.io/how-to-install-docker-on-ubuntu-and-centos/
 # The below command will install the necessary dependencies for Docker to run 
 3. sudo apt-get install docker.io -y
+
 # Enable Docker
 4. sudo systemctl enable docker
+
 # Start Docker
 5. sudo systemctl start docker
+
 # Run the below command to get the Hello World image form Docker library
 # In the below command docker-daemon will call docker-client
 6. sudo docker run hello-World
+
 # Permission Issue 
 7. docker run hello-world
+
 # Add the user(ubuntu) to the docker group
 8. sudo usermod -a -G docker ubuntu or sudo usermod -aG docker $(whoami)
+
 # logout and login and run the below command again
 9. docker run hello-world
+
 ## Create a new Docker file.
 # Create  a directory and enter into it.
 10. mkdir testDocker
+
 11. cd testDocker
+
 12. vim dockerfile
+
 # Write the below contents in the dockerfile
 13.
 from ubuntu:16.04
 label maintainer="<<mail id>>""
 run apt-get update
 run apt-get install -y python3
+
 # Below command build the docker image
 14.docker build .
+
 # New command to run the docker container
 15. docker container run hello-world
+
 # instantiate a new container. Below command will enter into the container
 16. docker container run -it --name python-container <<image id first 2 digits from the above steps>>
+
 17. cat /etc/issue
+
 18. apt-get install vim
+
 19. vim hello-world.py // Write some test in this script and run it.
+
 # remove a specific container
 20. docker rm --force <<id>>
+
 21. docker container pa -a
+
 # create docker volume
 22. docker volume create devvolume
+
 23. docker volumne inspect devvolumne
-24. docker container run -d --name devcont --mount source==devvolume, target=/app nginx
-25.
+
+24. docker container run -d --name devcont --mount source==devvolume,target=/app nginx
+
+25. docker container inpsect devcont
+
+26. docker push <<repository_name>>
+
+# Docker container ports
+27. docker container run -d nginx
+
+# To find which port has been exposed
+28. docker image  history <<image_name>>
+
+# To find the ip address of the container
+29. docker container inspect <<id of container>>| grep IPAdd
+
+# Enter into the container
+docker container exec -it devcont sh
+
+30. elinks <<ipaddress from above command>>
+
+31. elinks localhost // This will give error as we dnt have localhost listening to port 80 of nginx
+
+32. docker container run -d -P nginx
+
+33. docker container run -d -p 80:80 httpd
+
+34. curl -4 icanhazip.com
+
+35. elinks <<ip from above port>>
