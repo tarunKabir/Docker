@@ -1,0 +1,155 @@
+# Execute container commands
+1. docker container run <IMAGE> <CMD>
+# Docker command to execute in the shell
+2. docker container run -it nginx /bin/bash
+# Docker container logging
+# Networking
+docker network listening
+docker network inspect bridge
+docker network create <<name>>
+
+# Adding a container to a network
+docker network connect <network> <container>
+
+# Removing a container from a network
+docker network disconnect <network> <container>
+# 
+docker container run -d --name test_network -p 8081:80 nginx
+
+# Create subnet and gateway
+docker network create --subnet 10.1.0.0/24 --gateway 10.1.0.1 br01
+
+# Specify subset of ip within a range
+docker network create --subnet 10.1.0.0/16 --gateway 10.1.0.1 --ip-range=10.1.4.0/24 --driver=bridge --label=host4network br04
+
+# Assign container to the network, different that connect command
+# This will enter into the shell command of ubuntu
+docker container run --name network-test01 -it --network br04 ubunut sh
+
+# Install ping for ping google.com in the shell of a container
+apt-get install iputils-ping
+
+# Specify an IP to a container
+docker container run -d --name network-test02 --ip 10.1.4.102 --network br04 nginx
+
+# grep IP
+docker container inspect network-test02 | grep IPAddr
+
+# Create an internal bridge
+docker network create -d bridge --internal localhost
+
+# Create my sql container 
+docker container run -d --name test_mysql -e MYSQL_ROOT_PASSWORD=password --network localhost mysql:5.7
+
+#
+docker container run -it --name ping-mysql --network bridge ubuntu
+
+#
+docker network connect localhost ping-mysql
+
+#
+docker container start -ia ping-mysql
+
+#
+ping test_mysql
+
+# Docker volumne commands
+docker volumne -h
+
+docker volumne ls
+
+docker volume create <NAME>
+
+docker volumne inspect <NAME>
+
+# Docker Bind mounts
+
+## With bind mount , a file or directory on the host machine is mounted into a container
+## Volumes use a new directory that is created within Docker's Storage directory on the host machine 
+## and Docker manages that directory's
+## contents.
+
+mkdir target
+
+docker container run -d \
+--name nginx-bind-mount1 \
+--mount type=bind ,source="$(pwd)"/target,target=/app \
+nginx
+
+docker container ls
+
+docker container inspect 
+
+cd target
+
+touch file.txt
+
+docker container exec -it nginx-bind-mount1 /bin/bash
+
+ls
+
+touch file2.txt
+
+exit 
+
+ls
+
+cd ../
+
+docker container run -d --name nginx-bind-mount2 -v "$(pwd)"/target2:/app nginx 
+
+ls
+
+docker container exec -it nginx-bind-mount2 touch /app/file3.txt
+
+ls target2
+
+mkdir nginx
+
+cat << EOF >  nginx/nginx.conf
+user  nginx;
+worker_processes  1;
+
+error_log  /var/log/nginx/error.log warn;
+pid        /var/run/nginx.pid;
+
+
+events {
+    worker_connections  1024;
+}
+
+
+http {
+    include       /etc/nginx/mime.types;
+    default_type  application/octet-stream;
+
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  /var/log/nginx/access.log  main;
+
+    sendfile        on;
+    #tcp_nopush     on;
+
+    keepalive_timeout  65;
+
+    #gzip  on;
+
+    include /etc/nginx/conf.d/*.conf;
+}
+EOF
+
+docker container run -d --name nginx-bind-mount3 -v "$(pwd)"/nginx/nginx.conf:/etc/nginx/nginx.conf nginx
+##########################################
+
+docker volume create html-volume
+
+docker container run -d --name nginx-volume1  --mount type=volume, source=html-volume ,target=/usr/share/nginx/html/ nginx
+
+docker volume inspect html-volume
+
+docker container run -d --name nginx-volume2 -v html-volume:/usr/share/nginx/html/ nginx
+
+docker container inspect nginx-volume2
+

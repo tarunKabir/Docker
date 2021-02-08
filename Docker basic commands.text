@@ -82,7 +82,7 @@ run apt-get install -y python3
 29. docker container inspect <<id of container>>| grep IPAdd
 
 # Enter into the container
-docker container exec -it devcont sh
+docker container exec -it devcont sh //i stands for interactive and t stands for TTY
 
 30. elinks <<ipaddress from above command>>
 
@@ -95,3 +95,9 @@ docker container exec -it devcont sh
 34. curl -4 icanhazip.com
 
 35. elinks <<ip from above port>>
+
+# Pause or Un-Pause
+36. docker container pause <<id>> or docjer container unpause <<id>>
+
+# Delete a container
+37. docker container prune 

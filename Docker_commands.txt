@@ -1,0 +1,42 @@
+#Docker file
+
+FROM ubuntu:15:04       // FROM creates the layer from ubuntu 
+COPY . /app             // copy adds files from your Docker client's current directory 
+RUN make /app           // builds your application with make 
+CMD python /app/app.py  // cmd specifies what command to run within container
+
+
+## 
+FROM : Initialises  a new build image and sets the base image
+RUN  :  Will execute any commands in a new layer
+CMD  :  Provides a default for an executing container.
+       There can only be one CMD instruction in a docker file.
+LABEL : Adds metadata to an image
+EXPOSE :  Informs the docker that the container listens to the specified network ports at runtime
+ENV : sets the environment variable <key> to the <value>
+ADD : Copies new files , directories or remote URLs from <src> and adds them to  the filesystem of the image
+at the path <dest>
+
+mkdir docker-images
+
+cd docker-images
+
+mkdir weather-app
+
+cd weather-app
+
+git clone https://github.com/linuxacademy/content-weather-app.git src
+
+vi dockerfile
+
+FROM node
+LABEL org.label-schema.version=v1.1
+RUN mkdir -p /var/node
+ADD src/ /var/node/
+WORKDIR /var/node
+RUN npm install
+EXPOSE 3000
+CMD ./bin/www
+
+docker image build -t <<image>>/weather-app:v1
+docker container run -d --name weather-app1 -p 8081:3000 dockertest/weather-app:v1
